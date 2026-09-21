@@ -15,10 +15,10 @@
 
 import { S2Cell, S2LatLng } from "nodes2ts";
 import { GeoPoint } from "../types";
-import * as Long from "long";
+import Long from "long";
 
 export class S2Manager {
-  static generateGeohash(geoPoint: GeoPoint) {
+  static generateGeohash(geoPoint: GeoPoint): Long {
     const latLng = S2LatLng.fromDegrees(geoPoint.latitude, geoPoint.longitude);
     const cell = S2Cell.fromLatLng(latLng);
     const cellId = cell.id;

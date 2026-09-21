@@ -10,12 +10,12 @@ jobs:
     steps:
       - type: checkout
       - restore_cache:
-          key: v1-yarn
+          key: v1-pnpm
       - type: shell
         shell: /bin/sh
-        command: yarn install && yarn test
+        command: corepack enable && pnpm install --frozen-lockfile && pnpm test
       - save_cache:
-          key: v1-yarn-{{ checksum "yarn.lock" }}
+          key: v1-pnpm-{{ checksum "pnpm-lock.yaml" }}
           paths:
             - ~/workspace/node_modules
 
