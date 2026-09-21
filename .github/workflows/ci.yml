@@ -3,7 +3,7 @@ name: CI
 # PR check: reusable runs build + cover only (publishNpm is gated to main/dispatch).
 on:
   pull_request:
-    branches: [main]
+    branches: [master]
 
 permissions:
   contents: read
