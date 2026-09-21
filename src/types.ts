@@ -31,7 +31,7 @@ export interface GeoPoint {
   longitude: number;
 }
 export interface GeoQueryInput {
-  QueryInput?: QueryCommandInput;
+  QueryInput?: Partial<QueryCommandInput>;
 }
 export interface GeoQueryOutput extends QueryCommandOutput {
 }

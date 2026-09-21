@@ -63,7 +63,7 @@ export class DynamoDBManager {
    *
    * @return The query result.
    */
-  public async queryGeohash(queryInput: QueryCommandInput | undefined, hashKey: Long, range: GeohashRange): Promise<QueryCommandOutput[]> {
+  public async queryGeohash(queryInput: Partial<QueryCommandInput> | undefined, hashKey: Long, range: GeohashRange): Promise<QueryCommandOutput[]> {
     const queryOutputs: QueryCommandOutput[] = [];
 
     const nextQuery = async (lastEvaluatedKey: Record<string, AttributeValue> = null): Promise<void> => {

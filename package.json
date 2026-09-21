@@ -1,6 +1,6 @@
 {
-  "name": "dynamodb-geo-pruvonet",
-  "version": "0.5.0",
+  "name": "@pruvo/dynamodb-geo",
+  "version": "0.5.0-beta.0",
   "type": "commonjs",
   "description": "A javascript port of awslabs/dynamodb-geo, for dynamodb geospatial querying",
   "scripts": {
@@ -11,9 +11,12 @@
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "repository": "rh389/dynamodb-geo.js",
+  "repository": "PruvoNet/dynamodb-geo.js",
   "author": "Rob Hogan <github@rhogan.net>",
   "license": "Apache-2.0",
+  "publishConfig": {
+    "registry": "https://npm.pruvo.net/"
+  },
   "dependencies": {
     "@types/decimal.js": "^0.0.30",
     "long": "^5.3.2",
