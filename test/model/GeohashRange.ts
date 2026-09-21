@@ -1,6 +1,6 @@
 import { GeohashRange } from "../../src/model/GeohashRange";
 import { expect } from "chai";
-import * as Long from "long";
+import Long from "long";
 
 describe('GeohashRange.trySplit', function () {
 

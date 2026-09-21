@@ -1,0 +1,16 @@
+name: CI
+
+# PR check: reusable runs build + cover only (publishNpm is gated to main/dispatch).
+on:
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    # PRV-7626: native v2 pipeline — build + cover on the runner, no ci-docker.
+    # No `id-token: write`: v1 needed OIDC only to pull ci-docker from ECR.
+    uses: PruvoNet/.github/.github/workflows/lib-cicd.yml@v2
+    secrets: inherit

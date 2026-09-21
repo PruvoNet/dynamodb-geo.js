@@ -1,0 +1,54 @@
+name: PR conventions
+
+# Server-side enforcement of the Conventional-Commits + [PRV-####] convention that the local git
+# hooks (scripts/hooks/*) only check client-side (and which --no-verify skips). Squash-merge uses the
+# PR TITLE as the commit subject, so the title is the real enforcement point.
+#
+# Managed by Terraform (PruvoNet/infra -> files/pr-conventions.yml) and required via the branch
+# ruleset (check "PR conventions"). DO NOT edit in-repo — changes are overwritten on the next apply.
+# Bots (dependabot, coderabbitai, ...) are exempt so they don't get blocked.
+on:
+  pull_request:
+    # edited -> re-run when the title changes; synchronize -> report on each new head SHA.
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  pr-conventions:
+    name: PR conventions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate PR title (required) + branch name (advisory)
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+
+          # Bots don't follow the convention (dependabot bumps, coderabbit, etc.) — pass them so the
+          # required check never blocks automated PRs. Runs (not job-level `if`) so it still reports success.
+          if [[ "$PR_AUTHOR" == *"[bot]" ]]; then
+            echo "Bot PR by '$PR_AUTHOR' — skipping the convention check."
+            exit 0
+          fi
+
+          # Branch name — ADVISORY (mirrors scripts/hooks/branch-name.sh). Warn, never block:
+          # squash-merge + auto-delete makes the branch name throwaway.
+          branch_re='^(next|version|CI[0-9]+|PRV-[0-9]+([/-].+)?)$'
+          if [[ ! "$HEAD_REF" =~ $branch_re ]]; then
+            echo "::warning::Branch '$HEAD_REF' doesn't match next|version|CI<n>|PRV-<n>[/-desc] (advisory)."
+          fi
+
+          # PR title — REQUIRED. Conventional Commits + a [PRV-####] ref; this becomes the squash subject.
+          title_re='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?!?: .+ \[PRV-[0-9]+\]$'
+          if [[ ! "$PR_TITLE" =~ $title_re ]]; then
+            echo "::error::PR title must be Conventional Commits + a [PRV-####] reference."
+            echo "  got:      $PR_TITLE"
+            echo "  expected: <type>(optional-scope)!?: <subject> [PRV-1234]"
+            echo "  types:    feat fix docs style refactor perf test build ci chore revert"
+            exit 1
+          fi
+          echo "OK: $PR_TITLE"

@@ -1,0 +1,21 @@
+name: CD
+
+# Thin caller of the org-wide reusable @pruvo lib pipeline.
+# push to main / dispatch -> build + cover + publishNpm (Verdaccio) + bump version branch.
+on:
+  push:
+    branches: [master]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write # publishNpm pushes the version branch + tag
+
+jobs:
+  cicd:
+    # PRV-7626: native v2 pipeline. The build runs on the runner (setup-node + corepack
+    # pnpm) instead of inside ci-docker, and Verdaccio auth comes from the
+    # VERDACCIO_NPMRC org secret at runtime rather than baked into an image layer.
+    # No `id-token: write`: v1 needed OIDC only to pull ci-docker from ECR, and v2
+    # touches no AWS at all.
+    uses: PruvoNet/.github/.github/workflows/lib-cicd.yml@v2
+    secrets: inherit

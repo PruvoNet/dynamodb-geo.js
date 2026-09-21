@@ -1,0 +1,12 @@
+name: Notify notion-pr-webhook
+
+# No branches filter (PRV-7824): fires for a PR into ANY base branch, so stacked
+# work (a PR based on another feature branch) also reports to its Notion ticket.
+on:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  notify:
+    uses: PruvoNet/.github/.github/workflows/notion-pr-webhook.yml@v1
+    secrets: inherit
