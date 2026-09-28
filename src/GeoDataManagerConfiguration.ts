@@ -12,7 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-import { DynamoDB } from "aws-sdk";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { S2RegionCoverer } from "nodes2ts";
 
 export class GeoDataManagerConfiguration {
@@ -56,11 +56,11 @@ export class GeoDataManagerConfiguration {
    */
   geoJsonPointType: 'Point' | 'POINT' = 'Point';
 
-  dynamoDBClient: DynamoDB;
+  dynamoDBClient: DynamoDBClient;
 
   S2RegionCoverer: typeof S2RegionCoverer;
 
-  constructor(dynamoDBClient, tableName: string) {
+  constructor(dynamoDBClient: DynamoDBClient, tableName: string) {
     this.dynamoDBClient = dynamoDBClient;
     this.tableName = tableName;
     this.S2RegionCoverer = S2RegionCoverer;

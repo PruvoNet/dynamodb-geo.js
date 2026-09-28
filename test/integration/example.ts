@@ -1,16 +1,22 @@
 import * as ddbGeo from "../../src";
-import * as AWS from "aws-sdk";
+import {
+  CreateTableCommand,
+  DeleteTableCommand,
+  DynamoDBClient,
+  waitUntilTableExists
+} from "@aws-sdk/client-dynamodb";
 import { expect } from "chai";
-
-AWS.config.update({
-  accessKeyId: 'dummy',
-  secretAccessKey: 'dummy',
-  region: 'eu-west-1'
-});
 
 describe('Example', function () {
   // Use a local DB for the example.
-  const ddb = new AWS.DynamoDB({ endpoint: 'http://127.0.0.1:8000' });
+  const ddb = new DynamoDBClient({
+    endpoint: 'http://127.0.0.1:8000',
+    region: 'eu-west-1',
+    credentials: {
+      accessKeyId: 'dummy',
+      secretAccessKey: 'dummy'
+    }
+  });
 
   // Configuration for a new instance of a GeoDataManager. Each GeoDataManager instance represents a table
   const config = new ddbGeo.GeoDataManagerConfiguration(ddb, 'test-capitals');
@@ -26,9 +32,9 @@ describe('Example', function () {
     // Use GeoTableUtil to help construct a CreateTableInput.
     const createTableInput = ddbGeo.GeoTableUtil.getCreateTableRequest(config);
     createTableInput.ProvisionedThroughput.ReadCapacityUnits = 2;
-    await ddb.createTable(createTableInput).promise();
+    await ddb.send(new CreateTableCommand(createTableInput));
     // Wait for it to become ready
-    await ddb.waitFor('tableExists', { TableName: config.tableName }).promise()
+    await waitUntilTableExists({ client: ddb, maxWaitTime: 60 }, { TableName: config.tableName })
     // Load sample data in batches
 
     console.log('Loading sample data from capitals.json');
@@ -63,7 +69,7 @@ describe('Example', function () {
         thisBatch.push(itemToAdd);
       }
       console.log('Writing batch ' + (currentBatch++) + '/' + Math.ceil(data.length / BATCH_SIZE));
-      await capitalsManager.batchWritePoints(thisBatch).promise();
+      await capitalsManager.batchWritePoints(thisBatch);
       // Sleep
       await new Promise((resolve) => setInterval(resolve, WAIT_BETWEEN_BATCHES_MS));
       return resumeWriting();
@@ -94,6 +100,6 @@ describe('Example', function () {
 
   after(async function () {
     this.timeout(10000);
-    await ddb.deleteTable({ TableName: config.tableName }).promise()
+    await ddb.send(new DeleteTableCommand({ TableName: config.tableName }))
   });
 });

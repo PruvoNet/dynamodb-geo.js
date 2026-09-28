@@ -1,6 +1,6 @@
 import { S2Manager } from "../../src/s2/S2Manager";
 import { expect } from "chai";
-import * as Long from "long";
+import Long from "long";
 
 describe('S2Manager', () => {
     it('generateGeoHash', () => {

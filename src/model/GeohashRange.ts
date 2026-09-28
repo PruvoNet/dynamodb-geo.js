@@ -1,6 +1,6 @@
 import { GeoDataManagerConfiguration } from "../GeoDataManagerConfiguration";
 import { S2Manager } from "../s2/S2Manager";
-import * as Long from 'long';
+import Long from 'long';
 
 export class GeohashRange {
   rangeMin: Long;
