@@ -1,4 +1,4 @@
-[![npm version](https://badge.fury.io/js/dynamodb-geo.svg)](https://badge.fury.io/js/dynamodb-geo) [![CircleCI](https://circleci.com/gh/rh389/dynamodb-geo.js.svg?style=shield)](https://circleci.com/gh/rh389/dynamodb-geo.js)
+[![npm version](https://badge.fury.io/js/@pruvonet%2Fdynamodb-geo.svg)](https://www.npmjs.com/package/@pruvonet/dynamodb-geo) [![CI](https://github.com/PruvoNet/dynamodb-geo.js/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/PruvoNet/dynamodb-geo.js/actions/workflows/ci.yml)
 
 # Geo Library for Amazon DynamoDB
 This project is an unofficial port of [awslabs/dynamodb-geo][dynamodb-geo], bringing creation and querying of geospatial data to Node JS developers using [Amazon DynamoDB][dynamodb].
@@ -12,20 +12,20 @@ This project is an unofficial port of [awslabs/dynamodb-geo][dynamodb-geo], brin
 
 ## Installation
 Using [npm] or [yarn]:
-`npm install --save dynamodb-geo` or `yarn add dynamodb-geo`.
+`npm install --save @pruvonet/dynamodb-geo` or `yarn add @pruvonet/dynamodb-geo`.
 
 ## Getting started
-First you'll need to import the AWS sdk and set up your DynamoDB connection:
+First you'll need to install the AWS SDK v3 DynamoDB client (`@aws-sdk/client-dynamodb`, a peer dependency) and set up your DynamoDB connection:
 
 ```js
-const AWS = require('aws-sdk');
-const ddb = new AWS.DynamoDB({ endpoint: new AWS.Endpoint('http://localhost:8000') }); // Local development
+const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
+const ddb = new DynamoDBClient({ endpoint: 'http://localhost:8000' }); // Local development
 ```
 
-Next you must create an instance of `GeoDataManagerConfiguration` for each geospatial table you wish to interact with. This is a container for various options (see API below), but you must always provide a `DynamoDB` instance and a table name.
+Next you must create an instance of `GeoDataManagerConfiguration` for each geospatial table you wish to interact with. This is a container for various options (see API below), but you must always provide a `DynamoDBClient` instance and a table name.
 
 ```js
-const ddbGeo = require('dynamodb-geo');
+const ddbGeo = require('@pruvonet/dynamodb-geo');
 const config = new ddbGeo.GeoDataManagerConfiguration(ddb, 'MyGeoTable');
 ```
 
@@ -40,6 +40,8 @@ Finally, you should instantiate a manager to query and write to the table using 
 ```js
 const myGeoTableManager = new ddbGeo.GeoDataManager(config);
 ```
+
+All `GeoDataManager` methods return native Promises, so there is no `.promise()` call as in the AWS SDK v2 API.
 
 ## Choosing a `hashKeyLength` (optimising for performance and cost)
 The `hashKeyLength` is the number of most significant digits (in base 10) of the 64-bit geo hash to use as the hash key. Larger numbers will allow small geographical areas to be spread across DynamoDB partitions, but at the cost of performance as more [queries][dynamodb-query] need to be executed for box/radius searches that span hash keys. See [these tests][hashkeylength-tests] for an idea of how query performance scales with `hashKeyLength` for different search radii.
@@ -74,10 +76,12 @@ createTableInput.ProvisionedThroughput.ReadCapacityUnits = 2;
 console.log('Creating table with schema:');
 console.dir(createTableInput, { depth: null });
 
+const { CreateTableCommand, waitUntilTableExists } = require('@aws-sdk/client-dynamodb');
+
 // Create the table
-ddb.createTable(createTableInput).promise()
+ddb.send(new CreateTableCommand(createTableInput))
     // Wait for it to become ready
-    .then(function () { return ddb.waitFor('tableExists', { TableName: config.tableName }).promise() })
+    .then(function () { return waitUntilTableExists({ client: ddb, maxWaitTime: 60 }, { TableName: config.tableName }) })
     .then(function () { console.log('Table created and ready!') });
 ```
 
@@ -89,14 +93,14 @@ myGeoTableManager.putPoint({
             latitude: 51.51,
             longitude: -0.13
         },
-        PutItemInput: { // Passed through to the underlying DynamoDB.putItem request. TableName is filled in for you.
+        PutItemInput: { // Passed through to the underlying PutItemCommand. TableName is filled in for you.
             Item: { // The primary key, geohash and geojson data is filled in for you
                 country: { S: 'UK' }, // Specify attribute values using { type: value } objects, like the DynamoDB API.
                 capital: { S: 'London' }
             },
-            // ... Anything else to pass through to `putItem`, eg ConditionExpression
+            // ... Anything else to pass through to `PutItemCommand`, eg ConditionExpression
         }
-    }).promise()
+    })
     .then(function() { console.log('Done!') });
 ```
 See also [DynamoDB PutItem request][putitem]
@@ -119,7 +123,7 @@ myGeoTableManager.updatePoint({
                 ':newName': { S: 'United Kingdom'}
             }
         }
-    }).promise()
+    })
     .then(function() { console.log('Done!') });
 ```
 
@@ -138,7 +142,7 @@ myGeoTableManager.deletePoint({
             // Example: Only delete if the point does not have a country name set
             ConditionExpression: 'attribute_not_exists(country)'
         }
-    }).promise()
+    })
     .then(function() { console.log('Done!') });
 ```
 
