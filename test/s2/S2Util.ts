@@ -1,11 +1,11 @@
 import { expect } from "chai";
-import { S2LatLng } from "nodes2ts";
+import { S2LatLng, S2LatLngRect } from "nodes2ts";
 import { S2Util } from "../../src/s2/S2Util";
 
 // One degree of latitude on the S2 earth sphere (radius 6371010 m) is about 111195 m.
 const METERS_PER_DEGREE = 111195;
 
-const contains = (rect, latitude: number, longitude: number): boolean =>
+const contains = (rect: S2LatLngRect, latitude: number, longitude: number): boolean =>
   rect.containsLL(S2LatLng.fromDegrees(latitude, longitude));
 
 describe("S2Util.latLngRectFromQueryRectangleInput", () => {

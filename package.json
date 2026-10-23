@@ -4,7 +4,7 @@
   "type": "commonjs",
   "description": "A javascript port of awslabs/dynamodb-geo, for dynamodb geospatial querying",
   "scripts": {
-    "prepublishOnly": "pnpm build",
+    "prepack": "pnpm build",
     "clean": "rm -rf dist",
     "build": "tsc -d",
     "test": "mocha --require ts-node/register 'test/*.ts' 'test/dynamodb/*.ts' 'test/model/*.ts' 'test/s2/*.ts' 'test/util/*.ts'",
