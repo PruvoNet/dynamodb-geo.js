@@ -313,7 +313,7 @@ export class GeoDataManager {
 
     const results: QueryCommandOutput[][] = await Promise.all(promises);
     const mergedResults: ItemList = [];
-    results.forEach(queryOutputs => queryOutputs.forEach(queryOutput => mergedResults.push(...queryOutput.Items)));
+    results.forEach(queryOutputs => queryOutputs.forEach(queryOutput => mergedResults.push(...(queryOutput.Items ?? []))));
     return mergedResults;
   }
 
@@ -340,7 +340,7 @@ export class GeoDataManager {
       const latitude = coordinates[this.config.longitudeFirst ? 1 : 0];
 
       const latLng: S2LatLng = S2LatLng.fromDegrees(latitude, longitude);
-      return (centerLatLng.getEarthDistance(latLng) as any).toNumber() <= radiusInMeter;
+      return centerLatLng.getEarthDistance(latLng) <= radiusInMeter;
     });
   }
 

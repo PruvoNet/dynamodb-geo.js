@@ -5,8 +5,8 @@ import {
   DeleteItemCommandOutput,
   GetItemCommandInput,
   GetItemCommandOutput,
+  PutItemCommandInput,
   PutItemCommandOutput,
-  PutRequest,
   QueryCommandInput,
   QueryCommandOutput,
   UpdateItemCommandInput,
@@ -45,7 +45,8 @@ export interface GetPointOutput extends GetItemCommandOutput {
 export interface PutPointInput {
   RangeKeyValue: AttributeValue;
   GeoPoint: GeoPoint;
-  PutItemInput: PutRequest;
+  // The manager sets TableName and the key, geohash and geoJson attributes of Item.
+  PutItemInput: Omit<PutItemCommandInput, "TableName" | "Item"> & { Item?: Record<string, AttributeValue> };
 }
 export interface PutPointOutput extends PutItemCommandOutput {
 }
