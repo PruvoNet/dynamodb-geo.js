@@ -1,4 +1,4 @@
-[![npm version](https://badge.fury.io/js/@pruvonet%2Fdynamodb-geo.svg)](https://www.npmjs.com/package/@pruvonet/dynamodb-geo)
+[![npm version](https://badge.fury.io/js/@pruvonet%2Fdynamodb-geo.svg)](https://www.npmjs.com/package/@pruvonet/dynamodb-geo) [![CI](https://github.com/PruvoNet/dynamodb-geo.js/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/PruvoNet/dynamodb-geo.js/actions/workflows/ci.yml)
 
 # Geo Library for Amazon DynamoDB
 This project is an unofficial port of [awslabs/dynamodb-geo][dynamodb-geo], bringing creation and querying of geospatial data to Node JS developers using [Amazon DynamoDB][dynamodb].

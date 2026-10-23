@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - '**'
+  workflow_call:
+
+permissions: {}
+
+jobs:
+  ci:
+    uses: PruvoNet/oss-workflows/.github/workflows/ci-node.yml@638c70a621e280086c02bc7dcf4ccca4580d9041 # v1
+    permissions:
+      contents: read
+    with:
+      package-manager: pnpm
+      node-versions: '["20.x", "22.x", "24.x"]'
+      build-command: pnpm build
+      test-command: pnpm test
+      coverage-command: pnpm cover
+
+  zizmor:
+    uses: PruvoNet/oss-workflows/.github/workflows/zizmor.yml@638c70a621e280086c02bc7dcf4ccca4580d9041 # v1
+    permissions:
+      contents: read
