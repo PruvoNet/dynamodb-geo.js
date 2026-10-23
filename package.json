@@ -7,7 +7,7 @@
     "prepublishOnly": "pnpm build",
     "clean": "rm -rf dist",
     "build": "tsc -d",
-    "test": "mocha --require ts-node/register 'test/*.ts' 'test/dynamodb/*.ts' 'test/model/*.ts' 'test/s2/*.ts'",
+    "test": "mocha --require ts-node/register 'test/*.ts' 'test/dynamodb/*.ts' 'test/model/*.ts' 'test/s2/*.ts' 'test/util/*.ts'",
     "test:integration": "mocha --require ts-node/register 'test/integration/*.ts'",
     "cover": "c8 --reporter=text --reporter=lcov pnpm test"
   },
