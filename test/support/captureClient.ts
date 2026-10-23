@@ -45,3 +45,15 @@ export const captureWire = <Output extends MetadataBearer>(
   client.middlewareStack.add(spy, { step: "deserialize", priority: "high" });
   return client;
 };
+
+/**
+ * Builds a real DynamoDBClient whose every command fails with the given error, without reaching the network.
+ */
+export const rejectingClient = (error: Error): DynamoDBClient => {
+  const client = new DynamoDBClient({ region: "dummy" });
+  const fail: InitializeMiddleware<object, MetadataBearer> = () => async () => {
+    throw error;
+  };
+  client.middlewareStack.add(fail, { step: "initialize", priority: "high" });
+  return client;
+};

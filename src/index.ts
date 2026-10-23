@@ -7,3 +7,5 @@ export {
   GeoDataManagerConfiguration,
   GeoTableUtil
 }
+
+export * from "./types";
