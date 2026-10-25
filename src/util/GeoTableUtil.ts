@@ -14,7 +14,7 @@
  */
 
 
-import { DynamoDB } from "aws-sdk";
+import { CreateTableCommandInput } from "@aws-sdk/client-dynamodb";
 import { GeoDataManagerConfiguration } from "../GeoDataManagerConfiguration";
 /**
  * Utility class.
@@ -39,7 +39,7 @@ export class GeoTableUtil {
    *
    * @return Generated create table request.
    */
-  public static getCreateTableRequest(config: GeoDataManagerConfiguration): DynamoDB.CreateTableInput {
+  public static getCreateTableRequest(config: GeoDataManagerConfiguration): CreateTableCommandInput {
     return {
       TableName: config.tableName,
       ProvisionedThroughput: {

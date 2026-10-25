@@ -1,6 +1,6 @@
 import { GeohashRange } from "../../src/model/GeohashRange";
 import { expect } from "chai";
-import * as Long from "long";
+import Long from "long";
 
 describe('GeohashRange.trySplit', function () {
 
@@ -38,5 +38,57 @@ describe('GeohashRange.trySplit', function () {
             new GeohashRange(Long.fromString('1000000000009000000'), Long.fromString('1000000000009999999')),
             new GeohashRange(Long.fromString('1000000000010000000'), Long.fromString('1000000000010000000'))
         ]);
+    });
+});
+
+describe('GeohashRange constructor', function () {
+    it('accepts numbers and Long values', function () {
+        const range = new GeohashRange(10, Long.fromNumber(20));
+        expect(range.rangeMin.toString()).to.equal('10');
+        expect(range.rangeMax.toString()).to.equal('20');
+    });
+});
+
+describe('GeohashRange.trySplit with the documented examples', function () {
+    it('splits a positive range on the hash key', function () {
+        expect(new GeohashRange(123456789, 125678912).trySplit(3)).to.deep.equal([
+            new GeohashRange(123456789, 123999999),
+            new GeohashRange(124000000, 124999999),
+            new GeohashRange(125000000, 125678912)
+        ]);
+    });
+
+    it('splits a negative range on the hash key', function () {
+        expect(new GeohashRange(-125678912, -123456789).trySplit(3)).to.deep.equal([
+            new GeohashRange(-125678912, -125000000),
+            new GeohashRange(-124999999, -124000000),
+            new GeohashRange(-123999999, -123456789)
+        ]);
+    });
+});
+
+describe('GeohashRange.tryMerge', function () {
+    it('extends the max when the other range starts right after this one', function () {
+        const range = new GeohashRange(10, 20);
+        expect(range.tryMerge(new GeohashRange(22, 30))).to.equal(true);
+        expect(range).to.deep.equal(new GeohashRange(10, 30));
+    });
+
+    it('extends the min when the other range ends right before this one', function () {
+        const range = new GeohashRange(22, 30);
+        expect(range.tryMerge(new GeohashRange(10, 20))).to.equal(true);
+        expect(range).to.deep.equal(new GeohashRange(10, 30));
+    });
+
+    it('does not merge a range beyond the merge threshold', function () {
+        const range = new GeohashRange(10, 20);
+        expect(range.tryMerge(new GeohashRange(23, 30))).to.equal(false);
+        expect(range).to.deep.equal(new GeohashRange(10, 20));
+    });
+
+    it('does not merge overlapping ranges', function () {
+        const range = new GeohashRange(10, 20);
+        expect(range.tryMerge(new GeohashRange(15, 30))).to.equal(false);
+        expect(range).to.deep.equal(new GeohashRange(10, 20));
     });
 });
