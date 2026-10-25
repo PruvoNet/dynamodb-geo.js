@@ -1,5 +1,5 @@
 {
-  "name": "@pruvonet/dynamodb-geo",
+  "name": "dynamodb-geo-pruvonet",
   "version": "0.5.0-beta.0",
   "type": "commonjs",
   "description": "A javascript port of awslabs/dynamodb-geo, for dynamodb geospatial querying",

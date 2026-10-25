@@ -1,4 +1,4 @@
-[![npm version](https://badge.fury.io/js/@pruvonet%2Fdynamodb-geo.svg)](https://www.npmjs.com/package/@pruvonet/dynamodb-geo) [![CI](https://github.com/PruvoNet/dynamodb-geo.js/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/PruvoNet/dynamodb-geo.js/actions/workflows/ci.yml)
+[![npm version](https://badge.fury.io/js/dynamodb-geo-pruvonet.svg)](https://www.npmjs.com/package/dynamodb-geo-pruvonet) [![CI](https://github.com/PruvoNet/dynamodb-geo.js/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/PruvoNet/dynamodb-geo.js/actions/workflows/ci.yml)
 
 # Geo Library for Amazon DynamoDB
 This project is an unofficial port of [awslabs/dynamodb-geo][dynamodb-geo], bringing creation and querying of geospatial data to Node JS developers using [Amazon DynamoDB][dynamodb].
@@ -12,7 +12,7 @@ This project is an unofficial port of [awslabs/dynamodb-geo][dynamodb-geo], brin
 
 ## Installation
 Using [npm] or [yarn]:
-`npm install --save @pruvonet/dynamodb-geo` or `yarn add @pruvonet/dynamodb-geo`.
+`npm install --save dynamodb-geo-pruvonet` or `yarn add dynamodb-geo-pruvonet`.
 
 ## Getting started
 First you'll need to install the AWS SDK v3 DynamoDB client (`@aws-sdk/client-dynamodb`, a peer dependency) and set up your DynamoDB connection:
@@ -25,7 +25,7 @@ const ddb = new DynamoDBClient({ endpoint: 'http://localhost:8000' }); // Local 
 Next you must create an instance of `GeoDataManagerConfiguration` for each geospatial table you wish to interact with. This is a container for various options (see API below), but you must always provide a `DynamoDBClient` instance and a table name.
 
 ```js
-const ddbGeo = require('@pruvonet/dynamodb-geo');
+const ddbGeo = require('dynamodb-geo-pruvonet');
 const config = new ddbGeo.GeoDataManagerConfiguration(ddb, 'MyGeoTable');
 ```
 
